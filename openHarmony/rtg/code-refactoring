@@ -1,14 +1,22 @@
 TODO：
 1.将帧感知调度作为rtg的policy之一，提供灵活的架构供扩展
+	当前帧感知调度适用与串行的任务，是否可以考虑开发一套适用于并行化任务的rtg
+	可以无时延的需求，但是确保并行任务分配在不同的cpu上，
 2.除了start 和end之外，支持上层下发其他信息
 3.分析当前vload曲线的合理性，理论上分析是否存在优化点
 4.优化当前rtg内锁的使用方式
 5.在rtg中提供完整的传递
+6.prefer_cluster的精细化，提供per_task的prefer_cluster避免多个task分配到同一个cpu进行抢占的情况
+7.聚合负载计算的精细化，取并集时取load较大的一段
+
+definition:
 
 struct relate_thread_group {
   u32 nr_running;
   struct list_node task_list;
   struct rtg_class *rtg_class;
+  struct cpumask 
+  u32 prefer_cluster;
   
   /*window info*/
   u64 window_start;
@@ -18,3 +26,53 @@ struct relate_thread_group {
   u64 prev_window_load;
   u64 prev_window_exec; 
 }
+struct rtg_policy {
+	.tick;
+	.schedule
+	.migration
+	.exit
+	.wake_up
+}
+variable:
+struct relate_thread_group[MAX_RTG_GRP_NUM];
+struct list_node *active_grp_list;
+
+interval:
+void rtg_group_alloc();
+void rtg_group_free();
+void rtg_group_();
+void set_rtg_policy(enum rtg_policy rtg_policy);
+
+void rtg_tick();
+void rtg_schedule();
+void rtg_tick();
+void rtg_schedule();
+void rtg_migration();
+void rtg_exit();
+void wake_up();
+function:
+void rtg_tick()
+{
+	for_each_list_node(active_grp_list){
+		if (grp->policy != NULL)
+			grp->rtg_policy.tick();
+	}
+};
+
+
+
+-------------------------------deadline-------------------------------
+struct deadline_info {
+	u32 interval;
+	u32 frame_start;
+	u32 deadline;
+	
+	/* load tracking */
+	u32 max_util;
+	u32 min_util;
+	u32 deadline_load;
+	
+	
+	/* check point */
+}
+
