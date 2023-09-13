@@ -1,0 +1,20 @@
+TODO：
+1.将帧感知调度作为rtg的policy之一，提供灵活的架构供扩展
+2.除了start 和end之外，支持上层下发其他信息
+3.分析当前vload曲线的合理性，理论上分析是否存在优化点
+4.优化当前rtg内锁的使用方式
+5.在rtg中提供完整的传递
+
+struct relate_thread_group {
+  u32 nr_running;
+  struct list_node task_list;
+  struct rtg_class *rtg_class;
+  
+  /*window info*/
+  u64 window_start;
+  u64 mark_start;
+  u64 curr_window_load;
+  u64 curr_window_exec;
+  u64 prev_window_load;
+  u64 prev_window_exec; 
+}
