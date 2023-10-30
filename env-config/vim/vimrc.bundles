@@ -1,0 +1,279 @@
+"==========================================
+" bundle 插件管理和配置项
+"==========================================
+
+"------------------------------------------- begin of configs --------------------------------------------
+
+"################### 包依赖 #####################
+"package dependence:  ctags
+"python dependence:   pep8, pyflake
+
+"非兼容vi模式。去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
+set nocompatible
+" configure Vundle
+filetype off " required! turn off
+set rtp+=~/.vim/bundle/Vundle.vim
+
+call vundle#begin()
+
+"################### 插件管理 ###################
+
+" 使用Vundle来管理插件
+" vim plugin bundle control, command model
+"     :BundleInstall     install 安装配置的插件
+"     :BundleInstall!    update  更新
+"     :BundleClean       remove plugin not in list 删除本地无用插件
+Bundle 'gmarik/vundle'
+
+"################### 外观 ######################
+Bundle 'Solarized'
+set background=dark
+let g:solarized_termcolors=256
+
+"################### 基础 ######################
+
+" 多语言语法检查
+Bundle 'scrooloose/syntastic'
+let g:syntastic_error_symbol='>>'
+let g:syntastic_warning_symbol='>'
+let g:syntastic_check_on_open=1
+let g:syntastic_enable_highlighting = 0
+"let g:syntastic_python_checker="flake8,pyflakes,pep8,pylint"
+let g:syntastic_python_checkers=['pyflakes'] " 使用pyflakes,速度比pylint快
+let g:syntastic_javascript_checkers = ['jsl', 'jshint']
+let g:syntastic_html_checkers=['tidy', 'jshint']
+highlight SyntasticErrorSign guifg=white guibg=black
+
+"################### 快速编码 ###################
+"
+"-------------------setting for YouCompleteMe-------------
+Bundle 'Valloric/YouCompleteMe'
+" let g:ycm_show_diagnostics_ui = 0
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+
+nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <leader>jdc :YcmCompleter GoToDeclaration<CR>
+nnoremap <leader>jr :YcmCompleter GoToReferences<CR>
+
+nmap <leader>fs <Plug>(YCMFindSymbolInWorkspace)
+let g:ycm_auto_hover=''
+let g:ycm_always_populate_location_list = 1
+
+" 黑名单,不启用
+let g:ycm_filetype_blacklist = {
+      \ 'tagbar' : 1,
+      \ 'gitcommit' : 1,
+      \}
+
+" 自动补全单引号，双引号等
+Bundle 'Raimondi/delimitMate'
+
+" 快速注释
+" <leader>c<space>
+ Bundle 'scrooloose/nerdcommenter'
+let g:NERDSpaceDelims=1
+
+" 快速加入修改环绕字符
+Bundle 'tpope/vim-surround'
+" for repeat -> enhance surround.vim, . to repeat command
+Bundle 'tpope/vim-repeat'
+
+" 快速去行尾空格 [, + <Space>]
+Bundle 'bronson/vim-trailing-whitespace'
+map <leader><space> :FixWhitespace<cr>
+
+" 快速赋值语句对齐
+Bundle 'junegunn/vim-easy-align'
+vmap <Leader>a <Plug>(EasyAlign)
+nmap <Leader>a <Plug>(EasyAlign)
+if !exists('g:easy_align_delimiters')
+  let g:easy_align_delimiters = {}
+endif
+let g:easy_align_delimiters['#'] = { 'pattern': '#', 'ignore_groups': ['String'] }
+
+"################### 快速移动 ###################
+
+"更高效的移动 [,, + w/fx]
+Bundle 'Lokaltog/vim-easymotion'
+let g:EasyMotion_smartcase = 1
+" let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
+map <Leader><leader>h <Plug>(easymotion-linebackward)
+map <Leader><Leader>j <Plug>(easymotion-j)
+map <Leader><Leader>k <Plug>(easymotion-k)
+map <Leader><leader>l <Plug>(easymotion-lineforward)
+
+Bundle 'vim-scripts/matchit.zip'
+
+" 显示marks - 方便自己进行标记和跳转
+" m[a-zA-Z] add mark
+" '[a-zA-Z] go to mark
+" m<Space>  del all marks
+Bundle "kshenoy/vim-signature"
+
+"################### 功能相关 ###################
+
+" git.  git操作还是习惯命令行,vim里面处理简单diff编辑操作
+Bundle 'tpope/vim-fugitive'
+" :Gdiff  :Gstatus :Gvsplit
+nnoremap <leader>ge :Git diff<CR>
+nnoremap <leader>gb :Git blame<CR>
+nnoremap <leader>gl :Git log<CR>
+nnoremap <leader>gs :Git status<CR>
+" not ready to open
+" <leader>gs maps to :Gstatus<CR>
+" <leader>gd maps to :Gdiff<CR>  和现有冲突
+" <leader>gl maps to :Glog<CR>
+" <leader>gc maps to :Gcommit<CR>
+" <leader>gp maps to :Git push<CR>
+
+" 同git diff,实时展示文件中修改的行
+" 只是不喜欢除了行号多一列, 默认关闭,gs时打开
+Bundle 'airblade/vim-gitgutter'
+let g:gitgutter_map_keys = 0
+let g:gitgutter_enabled = 0
+let g:gitgutter_highlight_lines = 1
+nnoremap <leader>gg :GitGutterToggle<CR>
+
+" edit history, 可以查看回到某个历史状态
+Bundle 'sjl/gundo.vim'
+nnoremap <leader>h :GundoToggle<CR>
+
+"################### 显示增强 ###################
+
+"状态栏增强展示
+" 新的airline配置
+Bundle 'bling/vim-airline'
+if !exists('g:airline_symbols')
+let g:airline_symbols = {}
+endif
+let g:airline_left_sep = '▶'
+let g:airline_left_alt_sep = '❯'
+let g:airline_right_sep = '◀'
+let g:airline_right_alt_sep = '❮'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.branch = '⎇'
+
+
+"括号显示增强
+Bundle 'kien/rainbow_parentheses.vim'
+let g:rbpt_colorpairs = [
+    \ ['brown',       'RoyalBlue3'],
+    \ ['Darkblue',    'SeaGreen3'],
+    \ ['darkgray',    'DarkOrchid3'],
+    \ ['darkgreen',   'firebrick3'],
+    \ ['darkcyan',    'RoyalBlue3'],
+    \ ['darkred',     'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['brown',       'firebrick3'],
+    \ ['gray',        'RoyalBlue3'],
+    \ ['black',       'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['Darkblue',    'firebrick3'],
+    \ ['darkgreen',   'RoyalBlue3'],
+    \ ['darkcyan',    'SeaGreen3'],
+    \ ['darkred',     'DarkOrchid3'],
+    \ ['red',         'firebrick3'],
+    \ ]
+let g:rbpt_max = 40
+let g:rbpt_loadcmd_toggle = 0
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+
+" 代码缩进
+" https://github.com/nathanaelkane/vim-indent-guides
+"Bundle 'nathanaelkane/vim-indent-guides'
+"let g:indent_guides_auto_colors = 0
+"autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=3
+"autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=4
+"hi IndentGuidesOdd  guibg=red   ctermbg=3
+"hi IndentGuidesEven guibg=green ctermbg=4
+"hi IndentGuidesOdd  ctermbg=black
+"hi IndentGuidesEven ctermbg=darkgrey
+
+"主题 solarized
+Bundle 'altercation/vim-colors-solarized'
+"let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+let g:solarized_contrast="normal"
+let g:solarized_visibility="normal"
+
+"主题 molokai
+Bundle 'tomasr/molokai'
+"let g:molokai_original = 1
+
+
+"################### 快速导航 ###################
+" 标签导航
+Bundle 'majutsushi/tagbar'
+nmap <F9> :TagbarToggle<CR>
+let g:tagbar_autofocus = 1
+
+" for ruby
+let g:tagbar_type_ruby = {
+    \ 'kinds' : [
+        \ 'm:modules',
+        \ 'c:classes',
+        \ 'd:describes',
+        \ 'C:contexts',
+        \ 'f:methods',
+        \ 'F:singleton methods'
+    \ ]
+\ }
+
+"-------------------setting for LeaderF-------------
+Bundle 'Yggdroot/LeaderF', { 'do': './install.sh'  }
+" don't show the help in normal mode
+let g:Lf_HideHelp = 1
+let g:Lf_UseCache = 0
+let g:Lf_UseVersionControlTool = 0
+let g:Lf_IgnoreCurrentBufferName = 1
+" popup mode
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewInPopup = 1
+let g:Lf_StlSeparator = { 'left': "\ue0b0", 'right': "\ue0b2", 'font': "DejaVu Sans Mono for Powerline" }
+let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0 }
+
+let g:Lf_ShortcutF = "<C-P>"
+noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
+noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
+noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
+noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
+noremap <leader>ff :<C-U><C-R>=printf("Leaderf function %s", "")<CR><CR>
+
+noremap <C-B> :<C-U><C-R>=printf("Leaderf! rg --current-buffer -e %s ", expand("<cword>"))<CR>
+noremap <C-F> :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
+" search visually selected text literally
+xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR>
+noremap go :<C-U>Leaderf! rg --recall<CR>
+
+" should use `Leaderf gtags --update` first
+let g:Lf_GtagsAutoGenerate = 0
+let g:Lf_Gtagslabel = 'native-pygments'
+noremap <leader>fr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>fd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>fo :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
+noremap <leader>fn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
+noremap <leader>fp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
+
+"-------------------setting for NERDTREE-------------
+Bundle 'scrooloose/nerdtree'
+"nnoremap <F2> :NERDTreeToggle<CR>
+nnoremap <F1> :NERDTreeFind<CR>
+
+" Start NERDTree when Vim is started without file arguments.
+autocmd StdinReadPre * let s:std_in=1
+"autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+
+" Close the tab if NERDTree is the only window remaining in it.
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+
+let g:NERDTreeShowHidden = 1
+
+
+"------------------------------------------- end of configs --------------------------------------------
+call vundle#end()
+" filetype off
+filetype plugin indent on
